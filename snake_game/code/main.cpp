@@ -1,10 +1,22 @@
 #include <raylib.h>
 #include <deque> //for the snake body
+#include <raymath.h>
 
 int CELL_SIZE = 30;
 int CELL_NUMBER = 30;
 int WINDOW_HEIGHT = CELL_NUMBER*CELL_SIZE;
 int WINDOW_WIDTH = CELL_NUMBER*CELL_SIZE;
+
+float initial_time  = 0;
+
+bool interval(float time_interval){
+    float current_time = GetTime();
+    if(current_time-initial_time > time_interval){
+        initial_time = current_time;
+        return true;
+    }
+    return false;
+}
 
 
 class Food{
@@ -35,6 +47,7 @@ class Snake{
 
     public:
         std::deque<Vector2> body = {Vector2{4,7}, Vector2{5,7}, Vector2{6,7}};
+        Vector2 direction = {1,0};
 
         
         //methods
@@ -45,6 +58,10 @@ class Snake{
             }
         }
 
+        void update_state(){
+                body.pop_back();
+                body.push_front(Vector2Add(direction,body[0]));
+        }
 };
 
 int main(){
@@ -55,12 +72,25 @@ int main(){
     Food food;
     Snake snake;
 
-
     while (!WindowShouldClose()){
         BeginDrawing();
         ClearBackground(BLACK);
         food.draw_food();
         snake.draw_body();
+        if(IsKeyPressed(KEY_UP) && snake.direction.y != 1){
+            snake.direction = {0,-1};
+        }
+        if(IsKeyPressed(KEY_DOWN) && snake.direction.y != -1){
+            snake.direction = {0,1};
+        }
+        if(IsKeyPressed(KEY_LEFT) && snake.direction.x != 1){
+            snake.direction = {-1,0};
+        }
+        if(IsKeyPressed(KEY_RIGHT) && snake.direction.x != -1){
+            snake.direction = {1,0};
+        }
+        
+        if (interval(0.2)){snake.update_state();}
         EndDrawing();
 
     }
