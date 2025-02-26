@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include <deque> //for the snake body
 #include <raymath.h>
+#include <iostream>
 
 int CELL_SIZE = 30;
 int CELL_NUMBER = 30;
@@ -64,6 +65,18 @@ class Snake{
         }
 };
 
+
+class Game{
+    public:
+        bool check_collision_wall(Vector2 snake_head){
+            if(snake_head.x < 0 || snake_head.x>30 || snake_head.y < 0 || snake_head.y > 30){
+                return true;
+            }
+            return false;
+        }
+
+};
+
 int main(){
     
     InitWindow(WINDOW_WIDTH,WINDOW_HEIGHT,"Snake game");
@@ -71,6 +84,7 @@ int main(){
 
     Food food;
     Snake snake;
+    Game game;
 
     while (!WindowShouldClose()){
         BeginDrawing();
@@ -91,6 +105,9 @@ int main(){
         }
         
         if (interval(0.2)){snake.update_state();}
+        if(game.check_collision_wall(snake.body[0])){
+            std::cout << "Wall collision: {" << snake.body[0].x << "," << snake.body[0].y << "}" << std::endl;
+        }
         EndDrawing();
 
     }
