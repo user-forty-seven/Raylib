@@ -3,6 +3,7 @@
 #include <raylib.h>
 #include <raymath.h>
 
+
 int CELL_SIZE = 30;
 int CELL_NUMBER = 30;
 int WINDOW_HEIGHT = CELL_NUMBER * CELL_SIZE;

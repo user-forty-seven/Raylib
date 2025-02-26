@@ -1,4 +1,4 @@
--I/include
--L/lib
+-I /usr/local/include
+-L /usr/local/lib
 -lraylib
 
