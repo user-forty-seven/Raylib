@@ -24,9 +24,22 @@ bool interval(float time_interval) {
 class Food {
 
 public:
-  Food() { position = generate_random_position(); }
+  Food() { 
+    position = generate_random_position(); 
+    load_texture();
+  }
 
+  ~Food(){
+    unload_texture();
+}
   Vector2 position;
+
+  Texture2D apple;
+
+
+
+
+
 
   // methods
   Vector2 generate_random_position() {
@@ -36,9 +49,21 @@ public:
   }
 
   void draw_food() {
-    DrawRectangle(position.x * CELL_NUMBER, position.y * CELL_NUMBER, CELL_SIZE,
-                  CELL_SIZE, RED);
+    //DrawRectangle(position.x * CELL_NUMBER, position.y * CELL_NUMBER, CELL_SIZE,CELL_SIZE, RED);
+    DrawTexture(apple, position.x * CELL_NUMBER, position.y * CELL_NUMBER, WHITE);
   }
+
+
+  void load_texture(){
+    Image image_apple = LoadImage("assets/graphics/apple.png");
+    apple = LoadTextureFromImage(image_apple);
+    UnloadImage(image_apple);
+}
+
+void unload_texture(){
+  UnloadTexture(apple);
+}
+
 };
 
 class Snake {
@@ -46,7 +71,11 @@ class Snake {
 public:
   std::deque<Vector2> body = {Vector2{4, 7}, Vector2{5, 7}, Vector2{6, 7}};
   Vector2 direction = {1, 0};
+  
 
+  
+
+  
   // methods
   void draw_body() {
     for (unsigned int i = 0; i < body.size(); i++) {
@@ -72,6 +101,8 @@ public:
     }
     return false;
   }
+
+ 
 
 
 };
