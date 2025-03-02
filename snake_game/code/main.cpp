@@ -1,13 +1,14 @@
 #include <deque> //for the snake body
-#include <iostream>
 #include <raylib.h>
 #include <raymath.h>
 #include <string>
+#include <iostream>
 
 int CELL_SIZE = 30;
 int CELL_NUMBER = 30;
 int WINDOW_HEIGHT = CELL_NUMBER * CELL_SIZE;
 int WINDOW_WIDTH = CELL_NUMBER * CELL_SIZE;
+float offset = 50.0;
 
 float initial_time = 0;
 int score = 0;
@@ -70,7 +71,7 @@ public:
   void draw_food() {
     // DrawRectangle(position.x * CELL_NUMBER, position.y * CELL_NUMBER,
     // CELL_SIZE,CELL_SIZE, RED);
-    DrawTexture(apple, position.x * CELL_NUMBER, position.y * CELL_NUMBER,
+    DrawTexture(apple, offset + position.x * CELL_NUMBER, offset+ position.y * CELL_NUMBER,
                 snake);
   }
 
@@ -99,7 +100,7 @@ public:
     for (unsigned int i = 0; i < body.size(); i++) {
       // DrawRectangle(body[i].x*CELL_NUMBER, body[i].y*CELL_NUMBER,
       // CELL_SIZE, CELL_SIZE, YELLOW);
-      DrawRectangleRounded({body[i].x * CELL_NUMBER, body[i].y * CELL_NUMBER, (float)CELL_SIZE, (float)CELL_SIZE},0.5, 1, snake);
+      DrawRectangleRounded({offset + body[i].x * CELL_NUMBER, offset + body[i].y * CELL_NUMBER, (float)CELL_SIZE, (float)CELL_SIZE},0.5, 1, snake);
     }
   }
 
@@ -132,8 +133,9 @@ public:
 class Game {
 public:
   bool check_collision_wall(Vector2 snake_head) {
-    if (snake_head.x < 0 || snake_head.x > 30 || snake_head.y < 0 ||
-        snake_head.y > 30) {
+    if (snake_head.x < 0 || snake_head.x >= CELL_NUMBER || snake_head.y < 0 ||
+        snake_head.y >= CELL_NUMBER) {
+      std::cout << "body is {"  << snake_head.x <<  "," << snake_head.y << "}" << std::endl;
       return true;
     }
     return false;
@@ -141,7 +143,7 @@ public:
 
   void draw_score(const int &score) {
     std::string score_str = std::to_string(score);
-    DrawText(score_str.c_str(), 40, WINDOW_HEIGHT - 40, 20, WHITE);
+    DrawText(score_str.c_str(), offset-2, WINDOW_HEIGHT+2*offset - 40, 20, WHITE);
   }
 
   void game_over(std::deque<Vector2> &snake_body, bool &is_paused) {
@@ -152,7 +154,7 @@ public:
 
 int main() {
 
-  InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Snake game");
+  InitWindow(WINDOW_WIDTH + 2*offset, WINDOW_HEIGHT + 2*offset, "Snake game");
   SetTargetFPS(60);
 
   Food food;
@@ -161,7 +163,6 @@ int main() {
 
   while (!WindowShouldClose()) {
     BeginDrawing();
-    ClearBackground(background);
     food.draw_food();
     snake.draw_body();
 
@@ -196,8 +197,11 @@ int main() {
       food.position = food.generate_random_position(snake.body);
       score++;
     }
-
+    DrawRectangleLinesEx(Rectangle{offset-5, offset-5, (float)WINDOW_WIDTH+10, (float)WINDOW_HEIGHT+10}, 5, RED);
+    DrawText("Snake Game", offset-2, 15, 30, WHITE);
     game.draw_score(score);
+    
+    ClearBackground(background);
     EndDrawing();
   }
 
