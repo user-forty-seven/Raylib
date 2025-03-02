@@ -2,7 +2,6 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <string>
-#include <iostream>
 
 int CELL_SIZE = 30;
 int CELL_NUMBER = 30;
@@ -69,10 +68,8 @@ public:
   }
 
   void draw_food() {
-    // DrawRectangle(position.x * CELL_NUMBER, position.y * CELL_NUMBER,
-    // CELL_SIZE,CELL_SIZE, RED);
-    DrawTexture(apple, offset + position.x * CELL_NUMBER, offset+ position.y * CELL_NUMBER,
-                snake);
+    DrawTexture(apple, offset + position.x * CELL_NUMBER,
+                offset + position.y * CELL_NUMBER, snake);
   }
 
   void load_texture() {
@@ -87,20 +84,9 @@ class Snake {
 public:
   std::deque<Vector2> body = {Vector2{4, 7}, Vector2{5, 7}, Vector2{6, 7}};
   Vector2 direction = {1, 0};
-
-  /*Snake(std::deque<Vector2> user_input = {Vector2{1,1},Vector2{2,1},
-  Vector2{3,1}}){ for(unsigned int i=0; i<user_input.size();i++){
-        user_input[i].x = body[i].x;
-        user_input[i].y = body[i].y;
-    }
-  }*/
-
-  // methods
   void draw_body() {
     for (unsigned int i = 0; i < body.size(); i++) {
-      // DrawRectangle(body[i].x*CELL_NUMBER, body[i].y*CELL_NUMBER,
-      // CELL_SIZE, CELL_SIZE, YELLOW);
-      DrawRectangleRounded({offset + body[i].x * CELL_NUMBER, offset + body[i].y * CELL_NUMBER, (float)CELL_SIZE, (float)CELL_SIZE},0.5, 1, snake);
+           DrawRectangleRounded({offset + body[i].x * CELL_NUMBER, offset + body[i].y * CELL_NUMBER, (float)CELL_SIZE, (float)CELL_SIZE}, 0.5, 1, snake);
     }
   }
 
@@ -122,7 +108,7 @@ public:
   bool check_collision_body() {
     std::deque<Vector2> headless_body = body;
     headless_body.pop_front();
-    if (element_in_deque(headless_body, body[0]) && body.size()>=4) {
+    if (element_in_deque(headless_body, body[0]) && body.size() >= 4) {
       return true;
     } else {
       return false;
@@ -135,7 +121,6 @@ public:
   bool check_collision_wall(Vector2 snake_head) {
     if (snake_head.x < 0 || snake_head.x >= CELL_NUMBER || snake_head.y < 0 ||
         snake_head.y >= CELL_NUMBER) {
-      std::cout << "body is {"  << snake_head.x <<  "," << snake_head.y << "}" << std::endl;
       return true;
     }
     return false;
@@ -143,7 +128,8 @@ public:
 
   void draw_score(const int &score) {
     std::string score_str = std::to_string(score);
-    DrawText(score_str.c_str(), offset-2, WINDOW_HEIGHT+2*offset - 40, 20, WHITE);
+    DrawText(score_str.c_str(), offset - 2, WINDOW_HEIGHT + 2 * offset - 40, 20,
+             WHITE);
   }
 
   void game_over(std::deque<Vector2> &snake_body, bool &is_paused) {
@@ -154,7 +140,8 @@ public:
 
 int main() {
 
-  InitWindow(WINDOW_WIDTH + 2*offset, WINDOW_HEIGHT + 2*offset, "Snake game");
+  InitWindow(WINDOW_WIDTH + 2 * offset, WINDOW_HEIGHT + 2 * offset,
+             "Snake game");
   SetTargetFPS(60);
 
   Food food;
@@ -166,7 +153,9 @@ int main() {
     food.draw_food();
     snake.draw_body();
 
-    if(interval(0.2) && !is_paused){snake.update_state();}
+    if (interval(0.2) && !is_paused) {
+      snake.update_state();
+    }
     if ((IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)) &&
         snake.direction.y != 1) {
       snake.direction = {0, -1};
@@ -188,7 +177,8 @@ int main() {
       is_paused = false;
     }
 
-    if (game.check_collision_wall(snake.body[0]) || snake.check_collision_body()) {
+    if (game.check_collision_wall(snake.body[0]) ||
+        snake.check_collision_body()) {
       game.game_over(snake.body, is_paused);
       score = 0;
     }
@@ -197,15 +187,12 @@ int main() {
       food.position = food.generate_random_position(snake.body);
       score++;
     }
-    DrawRectangleLinesEx(Rectangle{offset-5, offset-5, (float)WINDOW_WIDTH+10, (float)WINDOW_HEIGHT+10}, 5, RED);
-    DrawText("Snake Game", offset-2, 15, 30, WHITE);
+    DrawRectangleLinesEx(Rectangle{offset - 5, offset - 5,(float)WINDOW_WIDTH + 10, (float)WINDOW_HEIGHT + 10},5, RED);
+    DrawText("Snake Game", offset - 2, 15, 30, WHITE);
     game.draw_score(score);
-    
     ClearBackground(background);
     EndDrawing();
   }
 
   CloseWindow();
 }
-
-// g++ -o main code/main.cpp -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
