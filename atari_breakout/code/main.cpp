@@ -1,5 +1,4 @@
 #include <raylib.h>
-#include <iostream>
 
 int BRICK_WIDTH = 50;
 int BRICK_HEIGHT = 30;
@@ -38,7 +37,8 @@ public:
 };
 
 void draw_bricks(Vector2 brick_position, Color color){
- DrawRectangle(brick_position.x*BRICK_WIDTH + 5, brick_position.y*BRICK_HEIGHT +5, BRICK_WIDTH-10, BRICK_HEIGHT-10, color);
+ //DrawRectangle(brick_position.x*BRICK_WIDTH + 5, brick_position.y*BRICK_HEIGHT +5, BRICK_WIDTH-10, BRICK_HEIGHT-10, color);
+  DrawRectangleRounded(Rectangle{brick_position.x*BRICK_WIDTH + 3, brick_position.y*BRICK_HEIGHT +3, (float)BRICK_WIDTH-6, (float)BRICK_HEIGHT-6}, 0.77, 30, color);
 }
 
 
