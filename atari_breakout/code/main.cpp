@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include <random> // because the raylib random numeber generator is "biased"
-//#include <iostream>
+#include <iostream>
+#include <raymath.h>
 
 
 float BRICK_WIDTH = 50.0f;
@@ -29,10 +30,10 @@ bool interval(float time){
 class Brick{
 public:
 
-
-
+  //this is the colour array's index
   int color;
 
+  //the colour array
   Color Red = {255,0,0,255};
   Color Orange = {255,165,0,255};
   Color Yellow = {255,255,0,255};
@@ -72,7 +73,7 @@ public:
 
   void draw(){
     //DrawRectangle(WINDOW_WIDTH/2-PADDLE_WIDTH, 3*WINDOW_HEIGHT/4, PADDLE_WIDTH, PADDLE_HEIGHT, WHITE);
-    DrawRectangleRounded({position.x*PADDLE_WIDTH-PADDLE_WIDTH,
+    DrawRectangleRounded({position.x*PADDLE_WIDTH-PADDLE_WIDTH/2.0f,
       //(float)WINDOW_WIDTH/2.0f-PADDLE_WIDTH,
       //(float)3.0f*WINDOW_HEIGHT/4.0f, 
       position.y*PADDLE_HEIGHT,
@@ -89,13 +90,42 @@ public:
 
 
 
+class Ball{
+  public:
+  Vector2 position = {10.0f,5.0f};
+  Vector2 direction = {0.2f,0.2f};
+
+  float radius = 10.0f;
+  Color ball_color = WHITE;
+
+
+  void draw_ball(){
+    DrawCircle(position.x*50.0f,position.y*50.0f, radius, ball_color);
+    
+  }
+
+  void update_state(){
+    position = Vector2Add(position, direction);
+  }
+  
+  void check_collisions_with_wall(){
+    if(position.x+(radius/50.0f)<= 1.0f|| position.x+(radius/50.0f) >= 20.0f){
+      direction.x *= -1; //reverses the direction
+    }
+    if(position.y+(radius/50.0f) <= 1.0f || position.y+(radius/50.0f) >= 10.0f){
+      direction.y *= -1; //again, reverses the direction
+    }
+  std::cout << "{" << position.x << "," << position.y << "}" << std::endl;
+  }
+};
+
+
 int main(){
-
-
   InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Atari Breakout");
   SetTargetFPS(60);
   Brick brick[ROWS][COLUMNS];
-  Paddle paddle; 
+  Paddle paddle;
+  Ball ball;
   //assign the position of the bricks to the position vector and assign a random colour to each (the constructor takes care of that part)
   for(int row=0;row<ROWS;row++){
     for(int col=0;col<COLUMNS;col++){
@@ -116,9 +146,11 @@ int main(){
     paddle.draw();
     if(interval(0.1)){
       paddle.update_state();
+      ball.update_state();
  //     std::cout << paddle.position.x <<std::endl;
 
     }
+    ball.draw_ball();
     
     //get input
     if(IsKeyReleased(KEY_LEFT) || IsKeyReleased(KEY_RIGHT) || paddle.position.x <= 1.0f || paddle.position.x >= 20.0f){
@@ -131,10 +163,13 @@ int main(){
       paddle.direction_x = 0.5f;
     }
 
-
-
+    //check for ball collions with the wall
+    ball.check_collisions_with_wall();
      EndDrawing();
   }
+
+
+
 
 
 
