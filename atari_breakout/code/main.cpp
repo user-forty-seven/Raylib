@@ -1,5 +1,7 @@
 #include <raylib.h>
 #include <random> // because the raylib random numeber generator is "biased"
+//#include <iostream>
+
 
 float BRICK_WIDTH = 50.0f;
 float BRICK_HEIGHT = 20.0f;
@@ -112,24 +114,26 @@ int main(){
         }
       }
     paddle.draw();
-    if(interval(0.1)){paddle.update_state();}
+    if(interval(0.1)){
+      paddle.update_state();
+ //     std::cout << paddle.position.x <<std::endl;
 
+    }
     
     //get input
-    if(IsKeyPressed(KEY_LEFT)){
+    if(IsKeyReleased(KEY_LEFT) || IsKeyReleased(KEY_RIGHT) || paddle.position.x <= 1.0f || paddle.position.x >= 20.0f){
+      paddle.direction_x = 0;
+    }
+    if(IsKeyDown(KEY_LEFT) && !(paddle.position.x <= 1.0f)){
         paddle.direction_x = -0.5f;
     }
-    if(IsKeyPressed(KEY_RIGHT)){
+    if(IsKeyDown(KEY_RIGHT) && !(paddle.position.x >= 20.0f)){
       paddle.direction_x = 0.5f;
     }
 
-    if(IsKeyReleased(KEY_LEFT) || IsKeyReleased(KEY_RIGHT)){
-      paddle.direction_x = 0;
-    }
 
 
      EndDrawing();
-    
   }
 
 
