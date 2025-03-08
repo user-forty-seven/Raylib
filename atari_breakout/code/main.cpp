@@ -93,7 +93,7 @@ public:
 class Ball{
   public:
   Vector2 position = {10.0f,5.0f};
-  Vector2 direction = {0.2f,0.2f};
+  Vector2 direction = {1.0f,1.0f};
 
   float radius = 10.0f;
   Color ball_color = WHITE;
@@ -109,12 +109,18 @@ class Ball{
   }
   
   void check_collisions_with_wall(){
-    if(position.x+(radius/50.0f)<= 1.0f|| position.x+(radius/50.0f) >= 20.0f){
-      direction.x *= -1; //reverses the direction
-    }
-    if(position.y+(radius/50.0f) <= 1.0f || position.y+(radius/50.0f) >= 10.0f){
-      direction.y *= -1; //again, reverses the direction
-    }
+    //if(position.x<= 1.0f|| position.x >= 20.0f){
+    //  std::cout << "Out of bounds, x axis" << std::endl;
+    //  direction.x *= -1.0f; //reverses the direction
+    //}
+    //if(position.y <= 1.0f || position.y >= 10.0f){
+    //  std::cout << "Out of bounds, y axis" << std::endl;
+    //  direction.y *= -1.0f; //again, reverses the direction
+    //}
+    if(position.x < 1.0f){direction.x = 1.0f;}
+    if(position.x >= 20.0f){direction.x = -1.0f;}
+    if(position.y < 1.0f){direction.y = 1.0;}
+    if(position.y >= 10.0f){direction.y = -1.0f;}
   std::cout << "{" << position.x << "," << position.y << "}" << std::endl;
   }
 };
