@@ -9,8 +9,18 @@ const int WINDOW_HEIGHT = 720;
 int star_number = 47;
 int star_size = 50;  //since the star png is 50x50
 
+
+void normalize_vector(Vector2 &direction){
+  double distance = std::sqrt(direction.x*direction.x + direction.y*direction.y);
+  if(distance != 0){
+    direction.x /= distance;
+    direction.y /= distance;
+  }
+}
 //this vector aka list will contain all the star postions
 std::vector<Vector2> star_coordinates;
+
+
 
 class Stars
 {
@@ -82,6 +92,7 @@ public:
   const int player_height = 75;
   Vector2 position = {(float)(WINDOW_WIDTH-player_width)/2,(float)(WINDOW_HEIGHT-player_height)*3/4};
   Vector2 direction = {0,0};
+  float speed = 5.0f;
   static Texture2D player_texture;
 
   static void load_player_texture(){
@@ -100,7 +111,9 @@ public:
 
   
   void update_state(){
-    position = Vector2Add(position,direction);
+    normalize_vector(direction);
+    position.x += direction.x*speed;
+    position.y += direction.y*speed;
   }
 
   void check_for_key_events(){
@@ -108,6 +121,7 @@ public:
     if(IsKeyDown(KEY_A) && !(position.x <= 0)){direction.x = -5;}
     if(IsKeyDown(KEY_D) && !(position.x+player_width >= WINDOW_WIDTH)){direction.x = 5;}
     if(IsKeyDown(KEY_S) && !(position.y+player_height >= WINDOW_HEIGHT)){direction.y = 5;}
+    if(IsKeyPressed(KEY_SPACE)){std::cout << "Shoot!" << std::endl;}
 
   }
   
@@ -119,6 +133,33 @@ public:
 
 };
 Texture2D Player::player_texture;
+
+
+class Meteor{
+public: 
+  const int meteor_width = 101;
+  const int meteor_height = 84;
+  Vector2 position = {(float)(WINDOW_WIDTH-meteor_width)/2,(float)(WINDOW_HEIGHT-meteor_height)/2};
+  Vector2 direction = {0,0};
+  static Texture2D meteor_texture;
+
+  static void load_meteor_texture(){
+    Image meteor_image = LoadImage("assets/images/meteor.png");
+    meteor_texture = LoadTextureFromImage(meteor_image);
+    UnloadImage(meteor_image);
+  }
+
+  static void unload_meteor_texture(){
+    UnloadTexture(meteor_texture);
+  }
+
+  void draw_meteor(){
+    DrawTexture(meteor_texture, position.x, position.y, WHITE);
+  }
+
+};
+
+Texture2D Meteor::meteor_texture;
 
 int main()
 {
@@ -134,6 +175,9 @@ int main()
   Player player;
   Player::load_player_texture();
 
+  Meteor meteor;
+  Meteor::load_meteor_texture();
+
   while (!WindowShouldClose()) {
     BeginDrawing();
     ClearBackground(BLACK);
@@ -142,11 +186,16 @@ int main()
     player.draw_player();
     player.check_for_key_events();
     player.update_state();
+   // std::cout << "{" << player.direction.x << "," << player.direction.y << "}" << std::endl;
     player.direction = {0,0};
+
+    meteor.draw_meteor();
+    
     EndDrawing();
   }
   Stars::unload_star_texture(); 
   Player::unload_player_texture();
+  Meteor::unload_meteor_texture();
   
   
   CloseWindow();
