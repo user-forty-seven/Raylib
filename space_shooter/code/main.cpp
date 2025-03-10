@@ -80,7 +80,7 @@ class Player{
 public:
   const int player_size = 100;
   Vector2 position = {(float)(WINDOW_WIDTH-player_size)/2,(float)(WINDOW_HEIGHT-player_size)*3/4};
-  Vector2 direction = {1,1};
+  Vector2 direction = {0,0};
   static Texture2D player_texture;
 
   static void load_player_texture(){
@@ -97,7 +97,17 @@ public:
     DrawTexture(player_texture, position.x, position.y, WHITE);
   }
 
-    
+  
+  void update_state(){
+    position = Vector2Add(position,direction);
+  }
+
+  void check_for_key_events(){
+    if(IsKeyDown(KEY_W)){direction.y = -5;}
+    if(IsKeyDown(KEY_A)){direction.x = -5;}
+    if(IsKeyDown(KEY_D)){direction.x = 5;}
+    if(IsKeyDown(KEY_S)){direction.y = 5;}
+  }
 };
 Texture2D Player::player_texture;
 
@@ -121,10 +131,14 @@ int main()
 
     for(int i = 0; i<(sizeof(star)/sizeof(star[0]));i++) star[i].draw_stars();
     player.draw_player();
+    player.update_state();
+    player.direction = {0,0}; //reset the direction after the player positoin updates
+    player.check_for_key_events();
     EndDrawing();
   }
   Stars::unload_star_texture(); 
   Player::unload_player_texture();
+  
   
   CloseWindow();
 
