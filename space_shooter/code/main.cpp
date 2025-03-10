@@ -78,8 +78,9 @@ Texture2D Stars::star_texture;
 
 class Player{
 public:
-  const int player_size = 100;
-  Vector2 position = {(float)(WINDOW_WIDTH-player_size)/2,(float)(WINDOW_HEIGHT-player_size)*3/4};
+  const int player_width = 112;
+  const int player_height = 75;
+  Vector2 position = {(float)(WINDOW_WIDTH-player_width)/2,(float)(WINDOW_HEIGHT-player_height)*3/4};
   Vector2 direction = {0,0};
   static Texture2D player_texture;
 
@@ -103,11 +104,19 @@ public:
   }
 
   void check_for_key_events(){
-    if(IsKeyDown(KEY_W)){direction.y = -5;}
-    if(IsKeyDown(KEY_A)){direction.x = -5;}
-    if(IsKeyDown(KEY_D)){direction.x = 5;}
-    if(IsKeyDown(KEY_S)){direction.y = 5;}
+    if(IsKeyDown(KEY_W) && !(position.y<=0)){direction.y = -5;}
+    if(IsKeyDown(KEY_A) && !(position.x <= 0)){direction.x = -5;}
+    if(IsKeyDown(KEY_D) && !(position.x+player_width >= WINDOW_WIDTH)){direction.x = 5;}
+    if(IsKeyDown(KEY_S) && !(position.y+player_height >= WINDOW_HEIGHT)){direction.y = 5;}
+
   }
+  
+  bool wall_collisions(){
+    if(position.x <= 0 || position.x+player_width >= WINDOW_WIDTH){return true;}
+    if(position.y <= 0 || position.y+player_height >= WINDOW_HEIGHT){return true;}
+    return false;
+  }
+
 };
 Texture2D Player::player_texture;
 
@@ -131,9 +140,9 @@ int main()
 
     for(int i = 0; i<(sizeof(star)/sizeof(star[0]));i++) star[i].draw_stars();
     player.draw_player();
-    player.update_state();
-    player.direction = {0,0}; //reset the direction after the player positoin updates
     player.check_for_key_events();
+    player.update_state();
+    player.direction = {0,0};
     EndDrawing();
   }
   Stars::unload_star_texture(); 
