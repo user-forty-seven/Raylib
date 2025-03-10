@@ -73,6 +73,34 @@ class Stars
 };
 Texture2D Stars::star_texture;
 
+
+
+
+class Player{
+public:
+  const int player_size = 100;
+  Vector2 position = {(float)(WINDOW_WIDTH-player_size)/2,(float)(WINDOW_HEIGHT-player_size)*3/4};
+  Vector2 direction = {1,1};
+  static Texture2D player_texture;
+
+  static void load_player_texture(){
+    Image player_image = LoadImage("assets/images/player.png");
+    player_texture = LoadTextureFromImage(player_image);
+    UnloadImage(player_image);
+  }
+
+  static void unload_player_texture(){
+    UnloadTexture(player_texture);
+  }
+
+  void draw_player(){
+    DrawTexture(player_texture, position.x, position.y, WHITE);
+  }
+
+    
+};
+Texture2D Player::player_texture;
+
 int main()
 {
   InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Space shooter");
@@ -84,15 +112,19 @@ int main()
   //for(int i = 0; i<(sizeof(star)/sizeof(star[0]));i++){ 
   //star[i].coordinates = star[i].generate_random_star_coordinates();
   ///}
+  Player player;
+  Player::load_player_texture();
 
   while (!WindowShouldClose()) {
     BeginDrawing();
     ClearBackground(BLACK);
 
     for(int i = 0; i<(sizeof(star)/sizeof(star[0]));i++) star[i].draw_stars();
+    player.draw_player();
     EndDrawing();
   }
-  Stars::unload_star_texture();  
+  Stars::unload_star_texture(); 
+  Player::unload_player_texture();
   
   CloseWindow();
 
